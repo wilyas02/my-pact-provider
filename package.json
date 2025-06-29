@@ -5,6 +5,7 @@
   "scripts": {
     "test": "jest",
     "start": "nodemon index.js",
+    "start:ci": "node index.js",
     "test:provider": "jest --testPathPattern=provider"
   },
   "keywords": [],

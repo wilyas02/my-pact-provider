@@ -3,34 +3,48 @@ name: Pact Verify Provider (Bi-directional)
 on:
   push:
     branches: [main]
+  pull_request:
+    branches: [main]
 
 jobs:
   pact-verification:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci
 
       - name: Start Provider API
         run: |
-          npm run start & # Start your Express server in background
-          sleep 5         # Wait for it to boot
+          npm run start:ci &
+          sleep 5
+          echo "Provider API started"
 
-      # - name: Run Pact Provider Verification Tests (Optional in Bi-Directional)
-      #   run: npm run test:provider
-      #   env:
-      #     PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-      #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+      - name: Health Check
+        run: |
+          curl -f http://localhost:8081/api/user/1 || exit 1
+          echo "Health check passed"
 
-      - name: Record Provider Verification
-        uses: pactflow/actions/create-version-tag@v1
-        with:
-          pacticipant: UserService
-          version: ${{ github.sha }}
-          environment: main
+      - name: Run Pact Provider Verification Tests
+        run: npm run test:provider
+        env:
+          PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+          PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
+      - name: Publish Provider Verification Results
+        if: success()
+        run: |
+          npx pact-broker publish-verification \
+            --provider-app-version=${{ github.sha }} \
+            --provider-branch=${{ github.ref_name }}
         env:
           PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
           PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
