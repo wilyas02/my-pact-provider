@@ -27,8 +27,10 @@ jobs:
           docker run --rm \
             -v $PWD:/workspace \
             -w /workspace \
+            -e PACT_BROKER_BASE_URL \
+            -e PACT_BROKER_TOKEN \
             pactfoundation/pact-cli:latest \
-            publish-provider-contract \
+            pactflow publish-provider-contract \
             pact/openapi.yaml \
             --provider="UserService" \
             --provider-app-version="${{ github.sha }}" \
