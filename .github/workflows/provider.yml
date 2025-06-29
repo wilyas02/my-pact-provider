@@ -38,16 +38,8 @@ jobs:
         env:
           PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
           PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-
-      - name: Publish Provider Verification Results
-        if: success()
-        run: |
-          npx pact-broker publish-verification \
-            --provider-app-version=${{ github.sha }} \
-            --provider-branch=${{ github.ref_name }}
-        env:
-          PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-          PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+          PROVIDER_VERSION: ${{ github.sha }}
+          PROVIDER_BRANCH: ${{ github.ref_name }}
 
 
 

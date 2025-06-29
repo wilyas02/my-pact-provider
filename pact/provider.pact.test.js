@@ -11,7 +11,8 @@ describe('Pact Verification', () => {
             provider: 'UserService',
             consumerVersionSelectors: [{ mainBranch: true }],
             publishVerificationResult: true,
-            providerVersion: '1.0.0',
+            providerVersion: process.env.PROVIDER_VERSION || '1.0.0',
+            providerVersionBranch: process.env.PROVIDER_BRANCH || 'main',
         }).verifyProvider();
     }, 20000);
 });
