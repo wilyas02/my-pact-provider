@@ -26,7 +26,7 @@ jobs:
       #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
       - name: Record Bi-Directional Verification
-        uses: pactflow/actions/broker@v1.1.0
+        uses: pactflow/broker-action@v1.1.0
         with:
           command: record-verification
           provider: UserService
