@@ -26,5 +26,4 @@ paths:
                     type: string
                 required:
                   - id
-                  - name
                   - age
