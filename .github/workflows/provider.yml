@@ -25,16 +25,15 @@ jobs:
       #     PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
       #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
-      - name: Record Bi-Directional Verification
-        uses: pactflow/broker-action@v1.1.0
+      - name: Record Provider Verification
+        uses: pactflow/actions/create-version-tag@v1
         with:
-          command: record-verification
-          provider: UserService
-          providerAppVersion: ${{ github.sha }}
-          success: true
-          contractType: oas
+          pacticipant: UserService
+          version: ${{ github.sha }}
+          environment: main
         env:
           PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
           PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
 
 
