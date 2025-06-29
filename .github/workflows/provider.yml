@@ -28,6 +28,14 @@ jobs:
           sleep 5
           echo "Provider API started"
 
+      - name: Run Provider Pact Verification Tests
+        run: npm run test:provider
+        env:
+          PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+          PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+          PROVIDER_VERSION: ${{ github.sha }}
+          PROVIDER_BRANCH: ${{ github.ref_name }}
+
       - name: Verify OpenAPI against running API
         run: |
           echo "Starting API verification..." > verification-results.txt
