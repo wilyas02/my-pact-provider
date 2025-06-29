@@ -24,13 +24,16 @@ jobs:
 
       - name: Publish OpenAPI Spec to Pact Broker
         run: |
-          curl -X PUT \
-            "$PACT_BROKER_BASE_URL/contracts/provider/UserService/version/${{ github.sha }}" \
-            -H "Authorization: Bearer $PACT_BROKER_TOKEN" \
-            -H "Content-Type: application/yaml" \
-            -H "Accept: application/hal+json" \
-            --data-binary @pact/openapi.yaml \
-            --fail --show-error
+          docker run --rm \
+            -v $PWD:/workspace \
+            -w /workspace \
+            pactfoundation/pact-cli:latest \
+            publish-provider-contract \
+            pact/openapi.yaml \
+            --provider="UserService" \
+            --provider-app-version="${{ github.sha }}" \
+            --branch="${{ github.ref_name }}" \
+            --content-type="application/yaml"
         env:
           PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
           PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
