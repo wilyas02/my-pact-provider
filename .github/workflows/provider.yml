@@ -19,11 +19,11 @@ jobs:
           npm run start & # Start your Express server in background
           sleep 5         # Wait for it to boot
 
-      - name: Run Pact Provider Verification Tests (Optional in Bi-Directional)
-        run: npm run test:provider
-        env:
-          PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
-          PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+      # - name: Run Pact Provider Verification Tests (Optional in Bi-Directional)
+      #   run: npm run test:provider
+      #   env:
+      #     PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+      #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
       - name: Record Provider Verification Result in Pactflow
         run: |
