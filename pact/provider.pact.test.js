@@ -9,7 +9,10 @@ describe('Pact Verification', () => {
             pactBrokerUrl: process.env.PACT_BROKER_BASE_URL,
             pactBrokerToken: process.env.PACT_BROKER_TOKEN,
             provider: 'UserService',
-            consumerVersionSelectors: [{ mainBranch: true }],
+            consumerVersionSelectors: [
+                { tag: 'latest', latest: true },  // Use the version tagged as 'latest'
+                { mainBranch: true }  // Fallback to main branch
+            ],
             publishVerificationResult: true,
             providerVersion: process.env.PROVIDER_VERSION || '1.0.0',
             providerVersionBranch: process.env.PROVIDER_BRANCH || 'main',
