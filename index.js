@@ -3,7 +3,7 @@ const express = require('express');
 const app = express();
 
 app.get('/api/user/1', (req, res) => {
-    res.json({ id: 1, name: 'John Doe', age: 8 }); // Matches what consumer expects
+    res.json({ id: 1, age: "8" }); // Matches what consumer expects
 });
 
 const PORT = process.env.PORT || 8081;
