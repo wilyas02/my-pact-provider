@@ -22,8 +22,6 @@ paths:
                 properties:
                   id:
                     type: integer
-                  name:
-                    type: string
                   age:
                     type: string
                 required:
