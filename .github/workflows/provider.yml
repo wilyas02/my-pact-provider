@@ -1,4 +1,4 @@
-name: Pact Verify Provider (Bi-directional)
+name: Pact Provider (Bi-directional with OpenAPI)
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     branches: [main]
 
 jobs:
-  pact-verification:
+  publish-provider-contract:
     runs-on: ubuntu-latest
 
     steps:
@@ -22,24 +22,19 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Start Provider API
+      - name: Publish OpenAPI Spec to Pact Broker
         run: |
-          npm run start:ci &
-          sleep 5
-          echo "Provider API started"
-
-      - name: Health Check
-        run: |
-          curl -f http://localhost:8081/api/user/1 || exit 1
-          echo "Health check passed"
-
-      - name: Run Pact Provider Verification Tests
-        run: npm run test:provider
+          npx @pact-foundation/pact-cli publish-provider-contract \
+            pact/openapi.yaml \
+            --provider="UserService" \
+            --provider-app-version="${{ github.sha }}" \
+            --branch="${{ github.ref_name }}" \
+            --content-type="application/yaml" \
+            --verification-success \
+            --verification-success-published-url="https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"
         env:
           PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
           PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
-          PROVIDER_VERSION: ${{ github.sha }}
-          PROVIDER_BRANCH: ${{ github.ref_name }}
 
 
 
