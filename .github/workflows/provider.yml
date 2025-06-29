@@ -1,4 +1,4 @@
-name: Pact Verify Provider
+name: Pact Verify Provider (Bi-directional)
 
 on:
   push:
@@ -10,17 +10,29 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      
+
       - name: Install dependencies
         run: npm install
-      
+
       - name: Start Provider API
         run: |
           npm run start & # Start your Express server in background
-          sleep 5         # Wait a few seconds for server to boot
+          sleep 5         # Wait for it to boot
 
-      - name: Run Pact Provider Verification
+      - name: Run Pact Provider Verification Tests (Optional in Bi-Directional)
         run: npm run test:provider
         env:
           PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
           PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
+      - name: Record Provider Verification Result in Pactflow
+        run: |
+          docker run --rm \
+            -e PACT_BROKER_BASE_URL=${{ secrets.PACT_BROKER_BASE_URL }} \
+            -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }} \
+            pactfoundation/pact-cli:latest \
+            pact-broker record-verification \
+              --provider UserService \
+              --provider-app-version=1.0.0 \
+              --success \
+              --contract-type=oas
