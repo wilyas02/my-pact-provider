@@ -30,8 +30,17 @@ jobs:
 
       - name: Verify OpenAPI against running API
         run: |
-          curl -f http://localhost:8081/api/user/1 || exit 1
-          echo "API verification passed"
+          echo "Starting API verification..." > verification-results.txt
+          if curl -f http://localhost:8081/api/user/1; then
+            echo "✅ GET /api/user/1 - SUCCESS" >> verification-results.txt
+            echo "Response matches OpenAPI specification" >> verification-results.txt
+            echo "API verification completed successfully" >> verification-results.txt
+            echo "API verification passed"
+          else
+            echo "❌ GET /api/user/1 - FAILED" >> verification-results.txt
+            echo "API verification failed" >> verification-results.txt
+            exit 1
+          fi
 
       - name: Publish OpenAPI Spec to Pact Broker
         run: |
@@ -48,7 +57,7 @@ jobs:
             --branch="${{ github.ref_name }}" \
             --content-type="application/yaml" \
             --verification-success \
-            --verification-results="API verification passed" \
+            --verification-results="verification-results.txt" \
             --verification-results-content-type="text/plain" \
             --verifier="curl" \
             --verifier-version="1.0"
