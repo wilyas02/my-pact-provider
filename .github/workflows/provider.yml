@@ -25,15 +25,16 @@ jobs:
       #     PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
       #     PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
 
-      - name: Record Provider Verification Result in Pactflow
-        run: |
-          docker run --rm \
-            -e PACT_BROKER_BASE_URL=${{ secrets.PACT_BROKER_BASE_URL }} \
-            -e PACT_BROKER_TOKEN=${{ secrets.PACT_BROKER_TOKEN }} \
-            pactfoundation/pact-broker-cli:latest \
-            pact-broker record-verification \
-              --provider UserService \
-              --provider-app-version=${{ github.sha }} \
-              --success \
-              --contract-type=oas
+      - name: Record Bi-Directional Verification
+        uses: pactflow/actions/broker@v1.1.0
+        with:
+          command: record-verification
+          provider: UserService
+          providerAppVersion: ${{ github.sha }}
+          success: true
+          contractType: oas
+        env:
+          PACT_BROKER_BASE_URL: ${{ secrets.PACT_BROKER_BASE_URL }}
+          PACT_BROKER_TOKEN: ${{ secrets.PACT_BROKER_TOKEN }}
+
 
